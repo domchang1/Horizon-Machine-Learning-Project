@@ -14,6 +14,10 @@ def apply(kernel, image):
                         output[y_i, x_i] += image[y_i + dy][x_i + dx][c] * kernel[c][int((h_k-1)/2) + dy][int((w_k-1)/2)+ dx]
     return output
 
+def rectify(arr):
+    for i in range(len(arr)):
+        if (arr[i] < 0):
+            arr[i] = 0
 
 kernel =[[ [ -1, 0, 1 ],
         [ -2, 0, 2 ],
@@ -27,6 +31,7 @@ print(kernel)
 cat = iio.imread('imageio:chelsea.png')
 print(cat.shape)
 img = np.array(cat)
+plt.imshow(img)
 # print(img)
 #new = np.dot(img, kernel)
 new = apply(kernel, img)
