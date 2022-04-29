@@ -1,6 +1,7 @@
 import numpy as np
 import imageio.v3 as iio
 import matplotlib.pyplot as plt
+#venv\Scripts\activate.bat to activate venv !!
 
 def apply(kernel, image):
     h_k = len(kernel)
@@ -31,11 +32,12 @@ print(kernel)
 cat = iio.imread('imageio:chelsea.png')
 print(cat.shape)
 img = np.array(cat)
-plt.imshow(img)
+plt.imshow(cat)
+plt.show()
 # print(img)
 #new = np.dot(img, kernel)
-new = apply(kernel, img)
-print (new)
-im = plt.imshow(new)
+# new = apply(kernel, img)
+# print (new)
+# im = plt.imshow(new)
 
 
