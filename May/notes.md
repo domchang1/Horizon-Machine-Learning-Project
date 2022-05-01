@@ -8,20 +8,10 @@ Goals:
     -think about where rectification will come in handy
 
  What was Acheived:
-    -Got venv working, though have to use anaconda prompt (can't figure out otherwise)
-    -Got packages installed
-    -Created random kernel
-    -Used imageio image, np arrays, and matplotlib imshow function
-    -Copied over apply function, wrote rectify function
-    -Answered questions (basic)
-    -Able to display image
+    -made bigger edge filters and increased magnitude of values: a lot higher range of values/colors, better edge detection, slower 
+    -
 
 Needs to be done:
-    -Learn how to get kernels to detect something, convolve them
-    -Modify apply function by adding numpy functions where needed
-    -Add bias, use rectification, then display
+ 
 
 Questions:
-    -How do I get kernels to detect something?
-    -Where do I use each numpy function in the apply function?
-    -How do I add bias?
