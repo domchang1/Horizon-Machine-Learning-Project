@@ -1,26 +1,34 @@
 import numpy as np
 import imageio.v3 as iio
 import matplotlib.pyplot as plt
+from scipy import signal
 #venv\Scripts\activate.bat to activate venv !!
 
-def convolve(kernel:np.ndarray, image:np.ndarray) -> np.ndarray:
-    h_k,w_k = kernel.shape
-    output = np.zeros_like(image) #creates same shape but empty
-    h_i,w_i = image.shape
-    support_h = (h_k-1)//2
-    support_w = (w_k-1)//2
-    image = np.pad(image, (support_h, support_w))
-    for y_i in range (h_i):
-        for x_i in range (w_i):
-            for dy in range(-1*support_h, support_h + 1):
-                for dx in range(-1*support_w, support_w + 1):
-                    output[y_i, x_i] += image[y_i + dy + support_h, x_i + dx + support_w] * kernel[support_h + dy,support_w + dx]
-    return output
+# def convolve(kernel:np.ndarray, image:np.ndarray) -> np.ndarray:
+#     h_k,w_k = kernel.shape
+#     output = np.zeros_like(image) #creates same shape but empty
+#     h_i,w_i = image.shape
+#     support_h = (h_k-1)//2
+#     support_w = (w_k-1)//2
+#     image = np.pad(image, (support_h, support_w))
+#     for y_i in range (h_i):
+#         for x_i in range (w_i):
+#             for dy in range(-1*support_h, support_h + 1):
+#                 for dx in range(-1*support_w, support_w + 1):
+#                     output[y_i, x_i] += image[y_i + dy + support_h, x_i + dx + support_w] * kernel[support_h + dy,support_w + dx]
+#     return output
 
 def rectify(arr):
     for i in range(len(arr)):
         if (arr[i] < 0):
             arr[i] = 0
+
+def bw(image):
+    r = image[:,:,0] #coefficients correspond to affect of color, more measurements of brightness for green 
+    g = image[:,:,1]
+    b = image[:,:,2]
+    return r*0.3 + g*0.6 + b*0.1
+
 
 vertical_kernel_a = np.array([ #check for vertical lines
     [-1, 2, -1],
@@ -50,28 +58,28 @@ vertical_kernel_d = np.array([ #check for vertical lines but bigger and bigger v
      [-50 ,-50, 200, -50, -50],
 ])
 #print(kernel)
-#cat = iio.imread('skyscraper.webp')
+skyscraper = iio.imread('skyscraper.webp')
 cat = iio.imread('imageio:chelsea.png') #numpy.ndarray, [row, col, color]
-print(type(cat))
+stop_sign = bw(iio.imread('stop-sign.jpg'))
+# print(type(cat))
 # print(cat[0,2,0]) # , separated means not slicing
 # print(cat[:,:,0]) #all red values
-r = cat[:,:,0]
-g = cat[:,:,1]
-b = cat[:,:,2] #coefficients correspond to affect of color, more measurements of brightness for green 
-grey_cat = r*0.3 + g*0.6 + b*0.1
-
-filter_output = convolve(vertical_kernel_a, grey_cat) #::-1 flips array, start, end, step size
-plt.subplot(3,1,1) #index is 1-based
+grey_cat = bw(cat)
+skyscraper = bw(skyscraper)
+#::-1 flips array, start, end, step size
+filter_output = signal.convolve(vertical_kernel_c, stop_sign) 
+plt.subplot(2,2,1) #index is 1-based
 plt.imshow(filter_output)
 plt.colorbar()
 
-plt.subplot(3,1,2)
-plt.imshow(convolve(vertical_kernel_c, grey_cat))
+plt.subplot(2,2,2)
+plt.imshow(signal.convolve(vertical_kernel_c, skyscraper))
 plt.colorbar()
 
-plt.subplot(3,1,3)
-plt.imshow(convolve(vertical_kernel_d, grey_cat))
+plt.subplot(2,2,3)
+plt.imshow(signal.convolve(vertical_kernel_c, grey_cat))
 plt.colorbar()
+
 # plt.subplot(2,2,2)
 # plt.imshow(convolve(vertical_kernel_a[:,::-1], grey_cat))
 # plt.colorbar()

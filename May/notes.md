@@ -9,7 +9,9 @@ Goals:
 
  What was Acheived:
     -made bigger edge filters and increased magnitude of values: a lot higher range of values/colors, better edge detection, slower 
-    -
+    -imported scipy, using signal.convolve which is a lot faster
+    -starting to compare stop sign, skyscraper, and cat
+    -rectification will help to eliminate the very deep colored, more uniform and smaller range of values probably
 
 Needs to be done:
  
