@@ -64,6 +64,8 @@ vertical_kernel_d = np.array([ #check for vertical lines but bigger and bigger v
 skyscraper = iio.imread('skyscraper.webp')
 cat = iio.imread('imageio:chelsea.png') #numpy.ndarray, [row, col, color]
 stop_sign = bw(iio.imread('stop-sign.jpg'))
+stopsignkernel = iio.imread('stop-sign-png-14.png') #for later
+
 # print(type(cat))
 # print(cat[0,2,0]) # , separated means not slicing
 # print(cat[:,:,0]) #all red values
