@@ -2,6 +2,9 @@ import numpy as np
 import imageio.v3 as iio
 import matplotlib.pyplot as plt
 from scipy import signal
+import skimage
+from skimage import data, color
+from skimage.transform import rescale, resize, downscale_local_mean
 #venv\Scripts\activate.bat to activate venv !!
 
 # def convolve(kernel:np.ndarray, image:np.ndarray) -> np.ndarray:
