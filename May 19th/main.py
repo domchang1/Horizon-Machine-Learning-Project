@@ -5,6 +5,7 @@ from scipy import signal
 import skimage
 from skimage import data, color
 from skimage.transform import rescale, resize, downscale_local_mean
+import os
 #venv\Scripts\activate.bat to activate venv !!
 
 # def convolve(kernel:np.ndarray, image:np.ndarray) -> np.ndarray:
@@ -64,6 +65,29 @@ vertical_kernel_d = np.array([ #check for vertical lines but bigger and bigger v
 9x9 kernel, 100x100 image, 100*100*81 operations, about 1 million, 10 imgs/s
 '''
 #print(kernel)
+l = []
+l.append(iio.imread(os.path.join("../images/","no-stop-sign.jpg")))
+l.append(iio.imread(os.path.join("../images/","no-stop-sign2.jpg")))
+l.append(iio.imread(os.path.join("../images/","no-stop-sign3.jpg")))
+l.append(iio.imread(os.path.join("../images/","no-stop-sign4.jpg")))
+l.append(iio.imread(os.path.join("../images/","no-stop-sign5.jpg")))
+l.append(iio.imread(os.path.join("../images/","no-stop-sign6.jpg")))
+l.append(iio.imread(os.path.join("../images/","no-stop-sign7.jpg")))
+l.append(iio.imread(os.path.join("../images/","no-stop-sign8.webp")))
+l.append(iio.imread(os.path.join("../images/","no-stop-sign9.png")))
+l.append(iio.imread(os.path.join("../images/","no-stop-sign10.webp")))
+l.append(iio.imread(os.path.join("../images/","stop-sign-1.jpg")))
+l.append(iio.imread(os.path.join("../images/","stop-sign-2.jpg")))
+l.append(iio.imread(os.path.join("../images/","stop-sign-3.webp")))
+l.append(iio.imread(os.path.join("../images/","stop-sign-4.webp")))
+l.append(iio.imread(os.path.join("../images/","stop-sign-5.jpg")))
+l.append(iio.imread(os.path.join("../images/","stop-sign-6.jpg")))
+l.append(iio.imread(os.path.join("../images/","stop-sign-7.jpg")))
+l.append(iio.imread(os.path.join("../images/","stop-sign-8.jpg")))
+l.append(iio.imread(os.path.join("../images/","stop-sign-9.jpg")))
+l.append(iio.imread(os.path.join("../images/","stop-sign-10.jpg")))
+print(l)
+exit()
 skyscraper = iio.imread('skyscraper.webp')
 cat = iio.imread('imageio:chelsea.png') #numpy.ndarray, [row, col, color]
 stop_sign = bw(iio.imread('stop-sign.jpg'))
