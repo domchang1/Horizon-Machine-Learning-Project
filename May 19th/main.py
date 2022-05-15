@@ -1,8 +1,7 @@
 import numpy as np
 import imageio.v3 as iio
 import matplotlib.pyplot as plt
-from scipy import signal
-import skimage
+from scipy.ndimage import convolve
 from skimage import data, color
 from skimage.transform import rescale, resize, downscale_local_mean
 import os
@@ -86,7 +85,16 @@ l.append(iio.imread(os.path.join("../images/","stop-sign-7.jpg")))
 l.append(iio.imread(os.path.join("../images/","stop-sign-8.jpg")))
 l.append(iio.imread(os.path.join("../images/","stop-sign-9.jpg")))
 l.append(iio.imread(os.path.join("../images/","stop-sign-10.jpg")))
-print(l)
+stopsignkernel = iio.imread(os.path.join("../images/","stop-sign-kernel.png"))
+stopsignkernel = resize(stopsignkernel, (9,9))
+for i in range(len(l)):
+    img = l[i]
+    plt.subplot(5,4,i+1)
+    convolved = bw(convolve(img, stopsignkernel))
+    print(np.amax(convolved))
+    plt.imshow(convolved)
+    plt.colorbar()
+plt.show()
 exit()
 skyscraper = iio.imread('skyscraper.webp')
 cat = iio.imread('imageio:chelsea.png') #numpy.ndarray, [row, col, color]
