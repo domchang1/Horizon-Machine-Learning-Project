@@ -87,15 +87,17 @@ l.append(iio.imread(os.path.join("../images/","stop-sign-9.jpg")))
 l.append(iio.imread(os.path.join("../images/","stop-sign-10.jpg")))
 stopsignkernel = iio.imread(os.path.join("../images/","stop-sign-kernel.png"))
 stopsignkernel = resize(stopsignkernel, (9,9))
+index = 1
 for i in range(0, len(l)):
     for j in range(1, 5):
         img = l[i]
         kernel_f = rescale(stopsignkernel, j*0.25)
-        plt.subplot(10,10,i+j)
+        plt.subplot(10,10,index)
         convolved = bw(convolve(img, kernel_f))
         print(np.amax(convolved))
         plt.imshow(convolved)
         plt.colorbar()
+        index += 1
 plt.show()
 exit()
 skyscraper = iio.imread('skyscraper.webp')
