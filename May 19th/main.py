@@ -2,8 +2,7 @@ import numpy as np
 import imageio.v3 as iio
 import matplotlib.pyplot as plt
 from scipy.ndimage import convolve
-from skimage import data, color
-from skimage.transform import rescale, resize, downscale_local_mean
+from skimage.transform import rescale, resize, AffineTransform
 import os
 #venv\Scripts\activate.bat to activate venv !!
 
@@ -89,15 +88,23 @@ stopsignkernel = iio.imread(os.path.join("../images/","stop-sign-kernel.png"))
 stopsignkernel = resize(stopsignkernel, (9,9))
 index = 1
 for i in range(0, len(l)):
+    curr_max = 0
+    img = l[i]
     for j in range(1, 5):
-        img = l[i]
         kernel_f = rescale(stopsignkernel, j*0.25)
-        plt.subplot(10,10,index)
-        convolved = bw(convolve(img, kernel_f))
-        print(np.amax(convolved))
-        plt.imshow(convolved)
-        plt.colorbar()
-        index += 1
+        for z in range(0, 10):
+            plt.subplot(100,10,index)
+            img = AffineTransform(shear=z*5*np.pi/180)
+            convolved = bw(convolve(img, kernel_f))
+            plt.imshow(convolved)
+            plt.colorbar()
+            index += 1
+            curr_max = max(np.amax(convolved), curr_max)
+
+    print(curr_max)
+    threshold = np.max(bw(img))
+    print(threshold)
+        
 plt.show()
 exit()
 skyscraper = iio.imread('skyscraper.webp')
