@@ -2,6 +2,7 @@ import numpy as np
 import imageio.v3 as iio
 import matplotlib.pyplot as plt
 from scipy.ndimage import convolve
+from skimage.io import imread_collection
 from skimage.transform import rescale, resize, AffineTransform
 import os
 
@@ -70,31 +71,8 @@ vertical_kernel_d = np.array([ #check for vertical lines but bigger and bigger v
      [-50 ,-50, 200, -50, -50],
      [-50 ,-50, 200, -50, -50],
 ])
-'''
-9x9 kernel, 100x100 image, 100*100*81 operations, about 1 million, 10 imgs/s
-'''
-#print(kernel)
-l = [iio.imread(os.path.join("../images/","stop-sign-10.jpg")) / 255.0]
-# l.append(iio.imread(os.path.join("../images/","no-stop-sign.jpg")))
-# l.append(iio.imread(os.path.join("../images/","no-stop-sign2.jpg")))
-# l.append(iio.imread(os.path.join("../images/","no-stop-sign3.jpg")))
-# l.append(iio.imread(os.path.join("../images/","no-stop-sign4.jpg")))
-# l.append(iio.imread(os.path.join("../images/","no-stop-sign5.jpg")))
-# l.append(iio.imread(os.path.join("../images/","no-stop-sign6.jpg")))
-# l.append(iio.imread(os.path.join("../images/","no-stop-sign7.jpg")))
-# l.append(iio.imread(os.path.join("../images/","no-stop-sign8.webp")))
-# l.append(iio.imread(os.path.join("../images/","no-stop-sign9.png")))
-# l.append(iio.imread(os.path.join("../images/","no-stop-sign10.webp")))
-# l.append(iio.imread(os.path.join("../images/","stop-sign-1.jpg")))
-# l.append(iio.imread(os.path.join("../images/","stop-sign-2.jpg")))
-# l.append(iio.imread(os.path.join("../images/","stop-sign-3.webp")))
-# l.append(iio.imread(os.path.join("../images/","stop-sign-4.webp")))
-# l.append(iio.imread(os.path.join("../images/","stop-sign-5.jpg")))
-# l.append(iio.imread(os.path.join("../images/","stop-sign-6.jpg")))
-# l.append(iio.imread(os.path.join("../images/","stop-sign-7.jpg")))
-# l.append(iio.imread(os.path.join("../images/","stop-sign-8.jpg")))
-# l.append(iio.imread(os.path.join("../images/","stop-sign-9.jpg")))
-# l.append(iio.imread(os.path.join("../images/","stop-sign-10.jpg")))
+
+l = np.array(imread_collection("../images/*.jpg"))
 
 stopsignkernel = iio.imread(os.path.join("../images/","stop-sign-kernel2.png"))/255.0
 stopsignkernel = resize(stopsignkernel, (19,19))
@@ -156,53 +134,3 @@ for i in range(0, len(l)):
         
 plt.show()
 exit()
-skyscraper = iio.imread('skyscraper.webp')
-cat = iio.imread('imageio:chelsea.png') #numpy.ndarray, [row, col, color]
-stop_sign = bw(iio.imread('stop-sign.jpg'))
-stopsignkernel = iio.imread('stop-sign-png-14.png') #for later
-
-# print(type(cat))
-# print(cat[0,2,0]) # , separated means not slicing
-# print(cat[:,:,0]) #all red values
-grey_cat = bw(cat)
-skyscraper = bw(skyscraper)
-#::-1 flips array, start, end, step size
-filter_output = signal.convolve(vertical_kernel_c, stop_sign) 
-plt.subplot(2,2,1) #index is 1-based
-plt.imshow(filter_output)
-plt.colorbar()
-
-plt.subplot(2,2,2)
-plt.imshow(signal.convolve(vertical_kernel_c, skyscraper))
-plt.colorbar()
-
-plt.subplot(2,2,3)
-plt.imshow(signal.convolve(vertical_kernel_c, grey_cat))
-plt.colorbar()
-
-# plt.subplot(2,2,2)
-# plt.imshow(convolve(vertical_kernel_a[:,::-1], grey_cat))
-# plt.colorbar()
-
-# plt.subplot(2,2,3)
-# plt.imshow(convolve(vertical_kernel_a.transpose(), grey_cat)) #switch row and column, horizontal edge detector
-# plt.colorbar()
-
-# plt.subplot(2,2,4)
-# plt.imshow(convolve(vertical_kernel_a[:,::-1].transpose(), grey_cat))
-# plt.colorbar()
-
-plt.show()
-exit()
-#r * 0.3 + g*0.6 + b*0.1
-print(cat.shape)
-img = np.array(cat)
-plt.imshow(cat)
-plt.show()
-# print(img)
-#new = np.dot(img, kernel)
-# new = apply(kernel, img)
-# print (new)
-# im = plt.imshow(new)
-
-
