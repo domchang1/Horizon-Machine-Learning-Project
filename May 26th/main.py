@@ -4,6 +4,17 @@ import matplotlib.pyplot as plt
 from scipy.ndimage import convolve
 from skimage.transform import rescale, resize, AffineTransform
 import os
+
+def convolve_rgb(image:np.ndarray, kernel:np.ndarray) -> np.ndarray:
+    r_image = image[:,:,0]
+    g_image = image[:,:,1]
+    b_image = image[:,:,2]
+    r_kernel= kernel[:,:,0]
+    g_kernel = kernel[:,:,1]
+    b_kernel = kernel[:,:,2]
+    return convolve(r_image, r_kernel) + convolve(g_image, g_kernel) + convolve(b_image, b_kernel)
+
+
 #venv\Scripts\activate.bat to activate venv !!
 
 # def convolve(kernel:np.ndarray, image:np.ndarray) -> np.ndarray:
@@ -63,43 +74,81 @@ vertical_kernel_d = np.array([ #check for vertical lines but bigger and bigger v
 9x9 kernel, 100x100 image, 100*100*81 operations, about 1 million, 10 imgs/s
 '''
 #print(kernel)
-l = []
-l.append(iio.imread(os.path.join("../images/","no-stop-sign.jpg")))
-l.append(iio.imread(os.path.join("../images/","no-stop-sign2.jpg")))
-l.append(iio.imread(os.path.join("../images/","no-stop-sign3.jpg")))
-l.append(iio.imread(os.path.join("../images/","no-stop-sign4.jpg")))
-l.append(iio.imread(os.path.join("../images/","no-stop-sign5.jpg")))
-l.append(iio.imread(os.path.join("../images/","no-stop-sign6.jpg")))
-l.append(iio.imread(os.path.join("../images/","no-stop-sign7.jpg")))
-l.append(iio.imread(os.path.join("../images/","no-stop-sign8.webp")))
-l.append(iio.imread(os.path.join("../images/","no-stop-sign9.png")))
-l.append(iio.imread(os.path.join("../images/","no-stop-sign10.webp")))
-l.append(iio.imread(os.path.join("../images/","stop-sign-1.jpg")))
-l.append(iio.imread(os.path.join("../images/","stop-sign-2.jpg")))
-l.append(iio.imread(os.path.join("../images/","stop-sign-3.webp")))
-l.append(iio.imread(os.path.join("../images/","stop-sign-4.webp")))
-l.append(iio.imread(os.path.join("../images/","stop-sign-5.jpg")))
-l.append(iio.imread(os.path.join("../images/","stop-sign-6.jpg")))
-l.append(iio.imread(os.path.join("../images/","stop-sign-7.jpg")))
-l.append(iio.imread(os.path.join("../images/","stop-sign-8.jpg")))
-l.append(iio.imread(os.path.join("../images/","stop-sign-9.jpg")))
-l.append(iio.imread(os.path.join("../images/","stop-sign-10.jpg")))
-stopsignkernel = iio.imread(os.path.join("../images/","stop-sign-kernel.png"))
-stopsignkernel = resize(stopsignkernel, (9,9))
-index = 1
+l = [iio.imread(os.path.join("../images/","stop-sign-10.jpg")) / 255.0]
+# l.append(iio.imread(os.path.join("../images/","no-stop-sign.jpg")))
+# l.append(iio.imread(os.path.join("../images/","no-stop-sign2.jpg")))
+# l.append(iio.imread(os.path.join("../images/","no-stop-sign3.jpg")))
+# l.append(iio.imread(os.path.join("../images/","no-stop-sign4.jpg")))
+# l.append(iio.imread(os.path.join("../images/","no-stop-sign5.jpg")))
+# l.append(iio.imread(os.path.join("../images/","no-stop-sign6.jpg")))
+# l.append(iio.imread(os.path.join("../images/","no-stop-sign7.jpg")))
+# l.append(iio.imread(os.path.join("../images/","no-stop-sign8.webp")))
+# l.append(iio.imread(os.path.join("../images/","no-stop-sign9.png")))
+# l.append(iio.imread(os.path.join("../images/","no-stop-sign10.webp")))
+# l.append(iio.imread(os.path.join("../images/","stop-sign-1.jpg")))
+# l.append(iio.imread(os.path.join("../images/","stop-sign-2.jpg")))
+# l.append(iio.imread(os.path.join("../images/","stop-sign-3.webp")))
+# l.append(iio.imread(os.path.join("../images/","stop-sign-4.webp")))
+# l.append(iio.imread(os.path.join("../images/","stop-sign-5.jpg")))
+# l.append(iio.imread(os.path.join("../images/","stop-sign-6.jpg")))
+# l.append(iio.imread(os.path.join("../images/","stop-sign-7.jpg")))
+# l.append(iio.imread(os.path.join("../images/","stop-sign-8.jpg")))
+# l.append(iio.imread(os.path.join("../images/","stop-sign-9.jpg")))
+# l.append(iio.imread(os.path.join("../images/","stop-sign-10.jpg")))
+
+stopsignkernel = iio.imread(os.path.join("../images/","stop-sign-kernel2.png"))/255.0
+stopsignkernel = resize(stopsignkernel, (19,19))
+localsumkernel = np.ones_like(stopsignkernel)
+index = 2
+# print(stopsignkernel.dtype)
+# print(l[11].dtype)
+#kernel_f = rescale(stopsignkernel, j*0.25)
+# for z in range(0, 10):
+plt.figure(figsize=(10, 8))
+plt.subplot(5,1,1)
+#for j in range(1, 5):
+img = rescale(l[0], (0.9, 0.9, 1))
+####
+stopsignkernel[:,:,1] = 0
+stopsignkernel[:,:,2] = 0
+####
+plt.imshow(np.uint8(img*255))
+# for z in range(0, 10):
+plt.subplot(5,1,index)
+# kernel_f = AffineTransform(shear=z*5*np.pi/180)
+convolved = convolve_rgb(img, stopsignkernel)
+plt.imshow(convolved, cmap='gray')
+plt.colorbar()
+# index += 1
+# curr_max = max(np.amax(convolved), 0)
+# print(curr_max)
+# threshold = np.max(bw(l[0]))
+# print(threshold)
+plt.subplot(5,1,3)
+localbrightness = convolve_rgb(img,localsumkernel)
+plt.imshow(localbrightness,cmap='gray')
+plt.subplot(5,1,4)
+score = convolved / (localbrightness + 0.01)
+plt.imshow(score,cmap='gray')
+plt.subplot(5,1,5)
+mask = score > np.quantile(score, 0.998)
+plt.imshow(mask, cmap='gray')
+plt.tight_layout()
+plt.show()
+exit()
 for i in range(0, len(l)):
     curr_max = 0
     img = l[i]
     for j in range(1, 5):
         kernel_f = rescale(stopsignkernel, j*0.25)
-        for z in range(0, 10):
-            plt.subplot(100,10,index)
-            kernel_f = AffineTransform(shear=z*5*np.pi/180)
-            convolved = bw(convolve(img, kernel_f))
-            plt.imshow(convolved)
-            plt.colorbar()
-            index += 1
-            curr_max = max(np.amax(convolved), curr_max)
+        # for z in range(0, 10):
+        plt.subplot(10,10,index)
+        # kernel_f = AffineTransform(shear=z*5*np.pi/180)
+        convolved = bw(convolve(img, kernel_f))
+        plt.imshow(convolved)
+        plt.colorbar()
+        index += 1
+        curr_max = max(np.amax(convolved), curr_max)
 
     print(curr_max)
     threshold = np.max(bw(img))

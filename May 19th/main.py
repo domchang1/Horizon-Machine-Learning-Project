@@ -94,7 +94,7 @@ for i in range(0, len(l)):
         kernel_f = rescale(stopsignkernel, j*0.25)
         for z in range(0, 10):
             plt.subplot(100,10,index)
-            kernel_f = AffineTransform(shear=z*5*np.pi/180)
+            img = AffineTransform(shear=z*5*np.pi/180)
             convolved = bw(convolve(img, kernel_f))
             plt.imshow(convolved)
             plt.colorbar()
