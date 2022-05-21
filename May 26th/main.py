@@ -72,46 +72,54 @@ vertical_kernel_d = np.array([ #check for vertical lines but bigger and bigger v
      [-50 ,-50, 200, -50, -50],
 ])
 
-l = np.array(imread_collection("../images/*.jpg"))
+l = list(imread_collection("../images/*.jpg"))
 
 stopsignkernel = iio.imread(os.path.join("../images/","stop-sign-kernel2.png"))/255.0
 stopsignkernel = resize(stopsignkernel, (19,19))
 localsumkernel = np.ones_like(stopsignkernel)
-index = 2
+rows = 5
+cols = 4
+index = 1
 # print(stopsignkernel.dtype)
 # print(l[11].dtype)
 #kernel_f = rescale(stopsignkernel, j*0.25)
 # for z in range(0, 10):
-plt.figure(figsize=(10, 8))
-plt.subplot(5,1,1)
-#for j in range(1, 5):
-img = rescale(l[0], (0.9, 0.9, 1))
-####
-stopsignkernel[:,:,1] = 0
-stopsignkernel[:,:,2] = 0
-####
-plt.imshow(np.uint8(img*255))
-# for z in range(0, 10):
-plt.subplot(5,1,index)
-# kernel_f = AffineTransform(shear=z*5*np.pi/180)
-convolved = convolve_rgb(img, stopsignkernel)
-plt.imshow(convolved, cmap='gray')
-plt.colorbar()
-# index += 1
-# curr_max = max(np.amax(convolved), 0)
-# print(curr_max)
-# threshold = np.max(bw(l[0]))
-# print(threshold)
-plt.subplot(5,1,3)
-localbrightness = convolve_rgb(img,localsumkernel)
-plt.imshow(localbrightness,cmap='gray')
-plt.subplot(5,1,4)
-score = convolved / (localbrightness + 0.01)
-plt.imshow(score,cmap='gray')
-plt.subplot(5,1,5)
-mask = score > np.quantile(score, 0.998)
-plt.imshow(mask, cmap='gray')
-plt.tight_layout()
+for i in range(0, len(l)):
+    # plt.subplot(rows,cols,index)
+    # index += 1
+    #for j in range(1, 5):
+    img = rescale(l[i], (0.9, 0.9, 1))
+    ####
+    # stopsignkernel[:,:,1] = 0
+    # stopsignkernel[:,:,2] = 0
+    ####
+    # plt.imshow(np.uint8(img*255))
+    # for z in range(0, 10):
+    # plt.subplot(rows,cols,index)
+    # index += 1
+    # kernel_f = AffineTransform(shear=z*5*np.pi/180)
+    convolved = convolve_rgb(img, stopsignkernel)
+    # plt.imshow(convolved, cmap='gray')
+    # plt.colorbar()
+    # index += 1
+    # curr_max = max(np.amax(convolved), 0)
+    # print(curr_max)
+    # threshold = np.max(bw(l[0]))
+    # print(threshold)
+    # plt.subplot(rows,cols,index)
+    # index += 1
+    localbrightness = convolve_rgb(img,localsumkernel)
+    # plt.imshow(localbrightness,cmap='gray')
+    # plt.subplot(rows,cols,index)
+    # index += 1
+    score = convolved / (localbrightness + 0.01)
+    # plt.imshow(score,cmap='gray')
+    plt.subplot(rows,cols,index)
+    index += 1
+    mask = score > np.quantile(score, 0.999999)
+    plt.imshow(mask, cmap='gray')
+    if 1 in mask:
+        print("There is a stop sign")
 plt.show()
 exit()
 for i in range(0, len(l)):
