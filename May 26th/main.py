@@ -3,7 +3,7 @@ import imageio.v3 as iio
 import matplotlib.pyplot as plt
 from scipy.ndimage import convolve
 from skimage.io import imread_collection
-from skimage.transform import rescale, resize, AffineTransform
+from skimage.transform import rescale, resize, AffineTransform, warp
 import os
 
 def convolve_rgb(image:np.ndarray, kernel:np.ndarray) -> np.ndarray:
@@ -71,12 +71,19 @@ vertical_kernel_d = np.array([ #check for vertical lines but bigger and bigger v
      [-50 ,-50, 200, -50, -50],
      [-50 ,-50, 200, -50, -50],
 ])
-
-l = list(imread_collection("../images/*.jpg"))
-
 stopsignkernel = iio.imread(os.path.join("../images/","stop-sign-kernel2.png"))/255.0
 stopsignkernel = resize(stopsignkernel, (19,19))
 localsumkernel = np.ones_like(stopsignkernel)
+l = list(imread_collection("../images/*.jpg"))
+# plt.subplot(1,2,1)
+# plt.imshow(stopsignkernel)
+# plt.subplot(1,2,2)
+# tform = AffineTransform(shear=10*5*np.pi/180)
+# img = warp(stopsignkernel, tform)
+# plt.imshow(img)
+# plt.show()
+# exit()
+
 rows = 5
 cols = 4
 index = 1
@@ -87,39 +94,40 @@ index = 1
 for i in range(0, len(l)):
     # plt.subplot(rows,cols,index)
     # index += 1
-    #for j in range(1, 5):
-    img = rescale(l[i], (0.9, 0.9, 1))
-    ####
-    # stopsignkernel[:,:,1] = 0
-    # stopsignkernel[:,:,2] = 0
-    ####
-    # plt.imshow(np.uint8(img*255))
-    # for z in range(0, 10):
-    # plt.subplot(rows,cols,index)
-    # index += 1
-    # kernel_f = AffineTransform(shear=z*5*np.pi/180)
-    convolved = convolve_rgb(img, stopsignkernel)
-    # plt.imshow(convolved, cmap='gray')
-    # plt.colorbar()
-    # index += 1
-    # curr_max = max(np.amax(convolved), 0)
-    # print(curr_max)
-    # threshold = np.max(bw(l[0]))
-    # print(threshold)
-    # plt.subplot(rows,cols,index)
-    # index += 1
-    localbrightness = convolve_rgb(img,localsumkernel)
-    # plt.imshow(localbrightness,cmap='gray')
-    # plt.subplot(rows,cols,index)
-    # index += 1
-    score = convolved / (localbrightness + 0.01)
-    # plt.imshow(score,cmap='gray')
-    plt.subplot(rows,cols,index)
-    index += 1
-    mask = score > np.quantile(score, 0.999999)
-    plt.imshow(mask, cmap='gray')
-    if 1 in mask:
-        print("There is a stop sign")
+    for j in range(3, 8):
+        img = rescale(l[i], (0.2*j, 0.2*j, 1))
+        ####
+        # stopsignkernel[:,:,1] = 0
+        # stopsignkernel[:,:,2] = 0
+        ####
+        # plt.imshow(np.uint8(img*255))
+        for z in range(0, 10):
+            # plt.subplot(rows,cols,index)
+            # index += 1
+            tform = AffineTransform(shear=z*5*np.pi/180)
+            stopsignkernel = warp(stopsignkernel, tform)
+            convolved = convolve_rgb(img, stopsignkernel)
+            # plt.imshow(convolved, cmap='gray')
+            # plt.colorbar()
+            # index += 1
+            # curr_max = max(np.amax(convolved), 0)
+            # print(curr_max)
+            # threshold = np.max(bw(l[0]))
+            # print(threshold)
+            # plt.subplot(rows,cols,index)
+            # index += 1
+            localbrightness = convolve_rgb(img,localsumkernel)
+            # plt.imshow(localbrightness,cmap='gray')
+            # plt.subplot(rows,cols,index)
+            # index += 1
+            score = convolved / (localbrightness + 0.01)
+            # plt.imshow(score,cmap='gray')
+            # plt.subplot(rows,cols,index)
+            index += 1
+            mask = score > np.quantile(score, 0.999999)
+            # plt.imshow(mask, cmap='gray')
+            if 1 in mask:
+                print("There is a stop sign")
 plt.show()
 exit()
 for i in range(0, len(l)):
