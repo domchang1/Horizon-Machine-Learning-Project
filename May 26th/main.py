@@ -124,10 +124,12 @@ for i in range(0, len(l)):
             # plt.imshow(score,cmap='gray')
             # plt.subplot(rows,cols,index)
             index += 1
-            mask = score > np.quantile(score, 0.999999)
+            mask = score > np.quantile(score, 0.99999)
             # plt.imshow(mask, cmap='gray')
             if 1 in mask:
                 print("There is a stop sign")
+            else:
+                print("No mask")
 plt.show()
 exit()
 for i in range(0, len(l)):
