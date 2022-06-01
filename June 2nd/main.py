@@ -114,6 +114,7 @@ for i in range(0, len(l)):
             maxscores.append(np.amax(score))
             # print(f"max score: {np.amax(score)}")
             plt.imshow(mask, cmap='gray')
+            plt.colorbar()
             plt.axis("off")
         print("Finished another plot")
         plt.savefig(f"../outputs/{i}-{j}.png")
