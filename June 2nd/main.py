@@ -110,7 +110,7 @@ for i in range(0, len(l)):
             plt.axis("off")
             plt.subplot(rows,cols,6+z*5)
             #mask = score > np.quantile(score, 0.999)
-            mask = score > 0.63
+            mask = score > 0.612
             maxscores.append(np.amax(score))
             # print(f"max score: {np.amax(score)}")
             plt.imshow(mask, cmap='gray')
@@ -119,7 +119,9 @@ for i in range(0, len(l)):
         print("Finished another plot")
         plt.savefig(f"../outputs/{i}-{j}.png")
         plt.close()
-    print(sorted(maxscores))
+    maxscores = sorted(maxscores)
+    print(maxscores)
+    np.savetxt(f"{i}.csv", maxscores)
     
     # if 1 in mask:
         #     print("There is a stop sign")
