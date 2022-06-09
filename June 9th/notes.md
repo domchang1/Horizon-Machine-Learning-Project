@@ -1,8 +1,9 @@
 Goals:
     -two types of variation: informative vs nuisance (not helpful)
     -list nuisance variations: size, left vs right and come up with remedy
-        -size: resize to same width (?) while keeping same aspect ratio
+        -size: resize to biggest size and squish to be inside square, then pad 
         -left vs right: can mirror (reflect across y axis) to left (or right) for all images
+        -brightness and saturation and contrast: divide by some measurement of those values from original image
     -read papers on machine vision on eye data (google scholar, kaggle)
         -https://eandv.biomedcentral.com/articles/10.1186/s40662-020-00183-6
             -"FP is a common ophthalmic imaging technique, in which optical cameras are used to obtain enlarged images of retinal tissues; these retinal photographs are suitable for monitoring, diagnosis, and treatment planning with respect to eye diseases."
@@ -20,7 +21,7 @@ Goals:
     -learn about machine learning, learning step
         -stochastic gradient descent: optimization algorithm to find the model parameters that correspond to the best fit between predicted and actual outputs
             -iteratively makes small adjustments, 
-
+    -DL arch: series of operations, DL instance: has weights/params
  What was Acheived:
     -Nuisance variations:
 
