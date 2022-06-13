@@ -3,8 +3,11 @@ from statistics import median
 import imageio.v3 as iio
 import numpy as np
 import torchvision
+import torch
 
 resnet = torchvision.models.resnet18(pretrained=True)
+newmodel = torch.nn.Sequential(*(list(resnet.children())[:-1]))
+print(newmodel)
 exit()
 imagepaths = sorted(Path("../images").glob("*.jpg"))
 imagepaths.insert(9, imagepaths.pop(1))
