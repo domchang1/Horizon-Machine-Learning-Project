@@ -17,11 +17,13 @@ Goals:
         -Is SGD just a faster but less accurate gradient descent because it skips over almost all of the data?
 
     -ask any questions
+        -How many images should I get the final features for and how do I get those from each image?
     -resnet
     -figure out how to take last layer off of resnet, get final 512 features for each image and save as file (pytorch/np.save)
         -need preprocessing, make images all the same size (256x256)
         -naming of folders has to be consistent
         -get resnet on the gpu
+            -https://www.kaggle.com/code/mishki/resnet-keras-code-from-scratch-train-on-gpu/notebook
     -learn scikit learn and etc., figure how to transform features into labels or scores
     -look at color correction and normalization before running (value ranges for resnet)
 
