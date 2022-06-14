@@ -18,6 +18,7 @@ Goals:
 
     -ask any questions
         -How many images should I get the final features for and how do I get those from each image?
+        -How do I load my own data and create a dataset and then match it with the labels?
     -resnet
     -figure out how to take last layer off of resnet, get final 512 features for each image and save as file (pytorch/np.save)
         -need preprocessing, make images all the same size (256x256)
@@ -26,6 +27,7 @@ Goals:
             -https://www.kaggle.com/code/mishki/resnet-keras-code-from-scratch-train-on-gpu/notebook
     -learn scikit learn and etc., figure how to transform features into labels or scores
     -look at color correction and normalization before running (value ranges for resnet)
+        -https://pytorch.org/vision/stable/transforms.html
 
  What was Acheived:
     -
