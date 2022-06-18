@@ -8,6 +8,7 @@ Goals:
 
  What was Acheived:
     -Fri: preprocessing found, working on getting features to file
+    -Sat: got features into file and into folders (both train and test), cleaned up main
     -Monday:
     -Tues:
     -Wed:...
