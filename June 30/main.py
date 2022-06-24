@@ -2,6 +2,15 @@ from pathlib import Path
 from sklearn.linear_model import LogisticRegression
 from sklearn.linear_model import LinearRegression
 from sklearn.neighbors import KNeighborsClassifier
+from sklearn.gaussian_process import GaussianProcessClassifier
+from sklearn.gaussian_process.kernels import RBF
+from sklearn.svm import SVC
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.ensemble import RandomForestClassifier, AdaBoostClassifier
+from sklearn.naive_bayes import GaussianNB
+from sklearn.discriminant_analysis import QuadraticDiscriminantAnalysis
+from sklearn.inspection import DecisionBoundaryDisplay
+from sklearn.neural_network import MLPClassifier
 import imageio.v3 as iio
 import numpy as np
 from torchvision import transforms, models
@@ -60,12 +69,27 @@ for filename in glob.glob('../trainingscenarios/*.pkl'):
     labels.append(values['diagnosis'])
 inputs = np.stack(inputs)
 print(inputs.shape, inputs.dtype)
-class_model = KNeighborsClassifier(n_neighbors=5)
-#class_model = LogisticRegression(random_state=0, C=1000, max_iter=1000)
-class_model.fit(inputs, labels)
-train_predictions = class_model.predict(inputs)
-print((train_predictions == labels).astype(int).mean())
-print(((train_predictions - labels) ** 2).mean())
+kneighbors = KNeighborsClassifier(n_neighbors=5).fit(inputs, labels)
+lsvm = SVC(kernel="linear", C=0.025).fit(inputs, labels)
+rbfsvm =  SVC(gamma=2, C=1).fit(inputs, labels)
+gausspc = GaussianProcessClassifier(1.0 * RBF(1.0)).fit(inputs, labels)
+tree = DecisionTreeClassifier(max_depth=5).fit(inputs, labels)
+forest = RandomForestClassifier(max_depth=5, n_estimators=10, max_features=1).fit(inputs, labels)
+mlp =  MLPClassifier(alpha=1, max_iter=1000).fit(inputs, labels)
+ada = AdaBoostClassifier().fit(inputs, labels)
+gaussnb = GaussianNB().fit(inputs, labels)
+qda =  QuadraticDiscriminantAnalysis().fit(inputs, labels)
+logregress = LogisticRegression(random_state=0, C=1000, max_iter=10000).fit(inputs, labels)
+linregress = LinearRegression().fit(inputs, labels)
+predictions = [kneighbors, lsvm, rbfsvm, gausspc, tree, forest, mlp, ada, gaussnb, qda, logregress, linregress]
+
+x = 1
+for i in predictions:
+    train_predictions = i.predict(inputs)
+    print(x)
+    x += 1
+    print((train_predictions == labels).astype(int).mean())
+    print(((train_predictions - labels) ** 2).mean())
 
 
 # dst = Path("../trainingscenarios/0000.pkl")    
