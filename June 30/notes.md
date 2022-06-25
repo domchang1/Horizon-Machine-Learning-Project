@@ -22,6 +22,7 @@ Goals:
      -0.77, 1.81
      -0.84, 0.58
      -0, 0.75
+    -Plotted confusion matrices
 Needs to be done:
  
 

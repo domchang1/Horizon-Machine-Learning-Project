@@ -1,6 +1,9 @@
 from pathlib import Path
+import matplotlib.pyplot as plt
+from sklearn.metrics import ConfusionMatrixDisplay
 from sklearn.linear_model import LogisticRegression
 from sklearn.linear_model import LinearRegression
+from sklearn.metrics import confusion_matrix
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.gaussian_process import GaussianProcessClassifier
 from sklearn.gaussian_process.kernels import RBF
@@ -11,11 +14,9 @@ from sklearn.naive_bayes import GaussianNB
 from sklearn.discriminant_analysis import QuadraticDiscriminantAnalysis
 from sklearn.inspection import DecisionBoundaryDisplay
 from sklearn.neural_network import MLPClassifier
-import imageio.v3 as iio
 import numpy as np
 from torchvision import transforms, models
 import torch
-from torchvision.utils import save_image
 import pandas as pd
 import pickle
 from PIL import Image
@@ -82,7 +83,7 @@ qda =  QuadraticDiscriminantAnalysis().fit(inputs, labels)
 logregress = LogisticRegression(random_state=0, C=1000, max_iter=10000).fit(inputs, labels)
 linregress = LinearRegression().fit(inputs, labels)
 predictions = [kneighbors, lsvm, rbfsvm, gausspc, tree, forest, mlp, ada, gaussnb, qda, logregress, linregress]
-
+#kneighbors, lsvm, rbfsvm, gausspc, tree, forest, mlp, ada, gaussnb, qda, logregress, linregress
 x = 1
 for i in predictions:
     train_predictions = i.predict(inputs)
@@ -90,6 +91,11 @@ for i in predictions:
     x += 1
     print((train_predictions == labels).astype(int).mean())
     print(((train_predictions - labels) ** 2).mean())
+    if x != 12:
+        cm = confusion_matrix(labels, train_predictions, labels=i.classes_)
+        disp = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=i.classes_)
+        disp.plot()
+        plt.show()
 
 
 # dst = Path("../trainingscenarios/0000.pkl")    
