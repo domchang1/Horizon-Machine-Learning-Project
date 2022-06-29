@@ -88,14 +88,15 @@ x = 1
 for i in predictions:
     train_predictions = i.predict(inputs)
     print(x)
-    x += 1
-    print((train_predictions == labels).astype(int).mean())
-    print(((train_predictions - labels) ** 2).mean())
     if x != 12:
         cm = confusion_matrix(labels, train_predictions, labels=i.classes_)
         disp = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=i.classes_)
-        disp.plot()
+        disp.plot()      
         plt.show()
+    x += 1
+    print((train_predictions == labels).astype(int).mean())
+    print(((train_predictions - labels) ** 2).mean())
+
 
 
 # dst = Path("../trainingscenarios/0000.pkl")    

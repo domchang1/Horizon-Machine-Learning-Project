@@ -23,7 +23,5 @@ Goals:
      -0.84, 0.58
      -0, 0.75
     -Plotted confusion matrices
-Needs to be done:
- 
-
 Questions:
+-Should I modify the hyperparameters? How so?
