@@ -54,27 +54,76 @@ def writeScenarios(image_list):
         dst = Path(f"../testingscenarios/{i:04d}.pkl") #switch testing to training
         dst.write_bytes(pickle.dumps(dict(id_code=training_set.id_code[i], diagnosis=-1, features=image_list[training_set.id_code[i]])))
     
+def checkDuplicates():
+    preprocessing = transforms.Compose([
+    transforms.Resize(256),
+    transforms.CenterCrop(224),
+    transforms.ToTensor(),
+    transforms.Normalize(mean=[0.485, 0.456, 0.406],
+                                 std=[0.229, 0.224, 0.225]),
+    ])
+    image_list = []
+    for filename in glob.glob('../test_images/*.png'): # switch depending on which images
+        im=Image.open(filename)
+        input = preprocessing(im)
+        image_list.append(input)
+    for input in image_list:
+        count = 0
+        for other in image_list:
+            if np.array_equal(input.numpy(), other.numpy()):
+                count += 1
+        if count > 1:
+            print(input)
+
+    
 # image_list = loadFeatures()
 # writeScenarios(image_list)
-
+np.random.seed(0)
 
 # device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
 # newmodel = newmodel.to(device) # on gpu
 # #inputs, labels = data[0].to(device), data[1].to(device) 
+checkDuplicates()
+exit()
 inputs = []
 labels = []
-for filename in glob.glob('../trainingscenarios/*.pkl'):
+filenames = glob.glob('../trainingscenarios/*.pkl')
+filenames = sorted(filenames)
+np.random.shuffle(filenames)
+for filename in filenames:
     #print(filename)
     values = pd.read_pickle(filename)
     inputs.append(values['features'][0,:,0,0])
     labels.append(values['diagnosis'])
 inputs = np.stack(inputs)
+for input in inputs:
+    count = 0
+    for other in inputs:
+        if np.array_equal(input, other):
+            count += 1
+    if count > 1:
+        print(input)
+
+
+exit()
+train_inputs = inputs[:2930]
+train_labels = labels[:2930]
+validation_inputs = inputs[2930:]
+validation_labels = labels[2930:]
+
 #print(inputs.shape, inputs.dtype)
-#kneighbors = KNeighborsClassifier(n_neighbors=1).fit(inputs, labels) #tuned
+kneighbors = KNeighborsClassifier(n_neighbors=1, algorithm='brute').fit(train_inputs, train_labels)
+predictions = kneighbors.predict(validation_inputs)
+print((predictions == validation_labels).astype(int).mean())
+print(((predictions - validation_labels) ** 2).mean())
+cm = confusion_matrix(validation_labels, predictions, labels=kneighbors.classes_)
+disp = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=kneighbors.classes_)
+disp.plot()      
+plt.show()
 #lsvm = SVC(kernel="linear", C=1000).fit(inputs, labels) #higher C means higher accuracy, lower distance
 #rbfsvm =  SVC(gamma=2, C=1).fit(inputs, labels) #no tuning needed
 #gausspc = GaussianProcessClassifier(1.0 * RBF(1.0), max_iter_predict=200, n_jobs=-1).fit(inputs, labels) #really slow
-tree = DecisionTreeClassifier(max_depth=5).fit(inputs, labels)
+#tree = DecisionTreeClassifier(max_depth=5).fit(inputs, labels)
 # forest = RandomForestClassifier(max_depth=5, n_estimators=10, max_features=1).fit(inputs, labels)
 # mlp =  MLPClassifier(alpha=1, max_iter=1000).fit(inputs, labels)
 # ada = AdaBoostClassifier().fit(inputs, labels)
@@ -82,22 +131,22 @@ tree = DecisionTreeClassifier(max_depth=5).fit(inputs, labels)
 # qda =  QuadraticDiscriminantAnalysis().fit(inputs, labels)
 # logregress = LogisticRegression(random_state=0, C=1000, max_iter=10000).fit(inputs, labels)
 # linregress = LinearRegression().fit(inputs, labels)
-predictions = [tree]
+predictions = [kneighbors]
 #kneighbors, lsvm, rbfsvm, gausspc, tree, forest, mlp, ada, gaussnb, qda, logregress, linregress
 x = 1
 for i in predictions:
-    train_predictions = i.predict(inputs)
-    print((train_predictions == labels).astype(int).mean())
-    print(((train_predictions - labels) ** 2).mean())
+    train_predictions = i.predict(train_inputs)
+    print((train_predictions == train_labels).astype(int).mean())
+    print(((train_predictions - train_labels) ** 2).mean())
     print(x)
     if x != 12:
-        cm = confusion_matrix(labels, train_predictions, labels=i.classes_)
+        cm = confusion_matrix(train_labels, train_predictions, labels=i.classes_)
         disp = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=i.classes_)
         disp.plot()      
         plt.show()
     x += 1
 
-
+#test_predictions = kneighbors.predict(inputs)
 
 # dst = Path("../trainingscenarios/0000.pkl")    
 # print(pd.read_pickle(dst))

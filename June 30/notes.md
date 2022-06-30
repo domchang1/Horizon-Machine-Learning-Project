@@ -25,3 +25,5 @@ Goals:
     -Plotted confusion matrices
 Questions:
 -Should I modify the hyperparameters? How so?
+-Do we want more accuracy or less distance?
+-When should I stop tuning parameters and cutting down on preformance?
