@@ -4,16 +4,16 @@ from sklearn.metrics import ConfusionMatrixDisplay
 from sklearn.linear_model import LogisticRegression
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import confusion_matrix
-from sklearn.neighbors import KNeighborsClassifier
-from sklearn.gaussian_process import GaussianProcessClassifier
-from sklearn.gaussian_process.kernels import RBF
-from sklearn.svm import SVC
-from sklearn.tree import DecisionTreeClassifier
-from sklearn.ensemble import RandomForestClassifier, AdaBoostClassifier
-from sklearn.naive_bayes import GaussianNB
-from sklearn.discriminant_analysis import QuadraticDiscriminantAnalysis
-from sklearn.inspection import DecisionBoundaryDisplay
-from sklearn.neural_network import MLPClassifier
+from sklearn.neighbors import KNeighborsClassifier, KNeighborsRegressor
+# from sklearn.gaussian_process import GaussianProcessClassifier
+# from sklearn.gaussian_process.kernels import RBF
+# from sklearn.svm import SVC
+# from sklearn.tree import DecisionTreeClassifier
+# from sklearn.ensemble import RandomForestClassifier, AdaBoostClassifier
+# from sklearn.naive_bayes import GaussianNB
+# from sklearn.discriminant_analysis import QuadraticDiscriminantAnalysis
+# from sklearn.inspection import DecisionBoundaryDisplay
+# from sklearn.neural_network import MLPClassifier
 import numpy as np
 from torchvision import transforms, models
 import torch
@@ -75,47 +75,50 @@ def checkDuplicates():
         if count > 1:
             print(input)
 
+def getInputsLabels():
+    inputs = []
+    labels = []
+    filenames = glob.glob('../trainingscenarios/*.pkl')
+    filenames = sorted(filenames)
+    np.random.shuffle(filenames)
+    for filename in filenames:
+        #print(filename)
+        values = pd.read_pickle(filename)
+        inputs.append(values['features'][0,:,0,0])
+        labels.append(values['diagnosis'])
+    print(len(inputs))
+    new_inputs = []
+    new_labels = []
+    for i in range(len(inputs)):
+        if not any((inputs[i] == new_inputs_).all() for new_inputs_ in new_inputs):
+            new_inputs.append(inputs[i])
+            new_labels.append(labels[i])
+    print(len(new_inputs))
+
+    inputs = np.stack(new_inputs)
+    labels = new_labels
+    return inputs, labels
+    # np.savetxt("inputs.txt", inputs, delimiter=',')
+    # np.savetxt("labels.txt", labels, delimiter=',')
+    #print(len(np.unique(inputs, axis=0)))
     
-# image_list = loadFeatures()
-# writeScenarios(image_list)
 np.random.seed(0)
-
-# device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
-# newmodel = newmodel.to(device) # on gpu
-# #inputs, labels = data[0].to(device), data[1].to(device) 
-checkDuplicates()
-exit()
-inputs = []
-labels = []
-filenames = glob.glob('../trainingscenarios/*.pkl')
-filenames = sorted(filenames)
-np.random.shuffle(filenames)
-for filename in filenames:
-    #print(filename)
-    values = pd.read_pickle(filename)
-    inputs.append(values['features'][0,:,0,0])
-    labels.append(values['diagnosis'])
-inputs = np.stack(inputs)
-for input in inputs:
-    count = 0
-    for other in inputs:
-        if np.array_equal(input, other):
-            count += 1
-    if count > 1:
-        print(input)
-
-
-exit()
+inputs, labels = getInputsLabels()
 train_inputs = inputs[:2930]
 train_labels = labels[:2930]
 validation_inputs = inputs[2930:]
 validation_labels = labels[2930:]
 
-#print(inputs.shape, inputs.dtype)
-kneighbors = KNeighborsClassifier(n_neighbors=1, algorithm='brute').fit(train_inputs, train_labels)
-predictions = kneighbors.predict(validation_inputs)
-print((predictions == validation_labels).astype(int).mean())
-print(((predictions - validation_labels) ** 2).mean())
+kneighbors = KNeighborsClassifier(n_neighbors=1).fit(train_inputs, train_labels)
+kneighborsreg = KNeighborsRegressor(n_neighbors=1).fit(train_inputs, train_labels)
+logregress = LogisticRegression(random_state=0, C=700, max_iter=4400).fit(inputs, labels)
+linregress = LinearRegression().fit(inputs, labels)
+
+models = [kneighbors, logregress]
+predictions = logregress.predict(validation_inputs)
+print((np.round(predictions, 0) == validation_labels).astype(int).mean())
+print(((predictions - validation_labels) ** 2).mean()) #should I remove the exponent?
+exit()
 cm = confusion_matrix(validation_labels, predictions, labels=kneighbors.classes_)
 disp = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=kneighbors.classes_)
 disp.plot()      
@@ -131,20 +134,20 @@ plt.show()
 # qda =  QuadraticDiscriminantAnalysis().fit(inputs, labels)
 # logregress = LogisticRegression(random_state=0, C=1000, max_iter=10000).fit(inputs, labels)
 # linregress = LinearRegression().fit(inputs, labels)
-predictions = [kneighbors]
-#kneighbors, lsvm, rbfsvm, gausspc, tree, forest, mlp, ada, gaussnb, qda, logregress, linregress
-x = 1
-for i in predictions:
-    train_predictions = i.predict(train_inputs)
-    print((train_predictions == train_labels).astype(int).mean())
-    print(((train_predictions - train_labels) ** 2).mean())
-    print(x)
-    if x != 12:
-        cm = confusion_matrix(train_labels, train_predictions, labels=i.classes_)
-        disp = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=i.classes_)
-        disp.plot()      
-        plt.show()
-    x += 1
+# predictions = [kneighbors]
+# #kneighbors, lsvm, rbfsvm, gausspc, tree, forest, mlp, ada, gaussnb, qda, logregress, linregress
+# x = 1
+# for i in predictions:
+#     train_predictions = i.predict(train_inputs)
+#     print((train_predictions == train_labels).astype(int).mean())
+#     print(((train_predictions - train_labels) ** 2).mean())
+#     print(x)
+#     if x != 12:
+#         cm = confusion_matrix(train_labels, train_predictions, labels=i.classes_)
+#         disp = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=i.classes_)
+#         disp.plot()      
+#         plt.show()
+#     x += 1
 
 #test_predictions = kneighbors.predict(inputs)
 

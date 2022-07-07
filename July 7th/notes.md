@@ -10,6 +10,4 @@ Goals:
  What was Acheived:
     -
 Questions:
--Should I modify the hyperparameters? How so?
--Do we want more accuracy or less distance?
--When should I stop tuning parameters and cutting down on preformance?
+-Got rid of all duplicates, how to save the tensors?
