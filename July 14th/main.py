@@ -21,6 +21,7 @@ import pandas as pd
 import pickle
 from PIL import Image
 import glob
+import Augmentor
 
 # load in images, resize and normalize, save each scenario (512 features + id + label) into new file
 
@@ -33,9 +34,9 @@ def loadFeatures():
                                  std=[0.229, 0.224, 0.225]),
     ])
     resnet = models.resnet18(pretrained=True)
-    newmodel = torch.nn.Sequential(*(list(resnet.children())[:-1]))
+    newmodel = torch.nn.Sequential(*(list(resnet.children())[:-2]))
     image_list = {}
-    for filename in glob.glob('../test_images/*.png'): # switch depending on which images
+    for filename in glob.glob('../train_images/*.png'): # switch depending on which images
         im=Image.open(filename)
         input = preprocessing(im)
         input_batch = input.unsqueeze(0)
@@ -44,15 +45,15 @@ def loadFeatures():
         #     newmodel.to('cuda')
         with torch.no_grad():
             output = newmodel(input_batch)
-        id = str(filename[15:len(filename)-4]) #16 for train, 15 for test
+        id = str(filename[16:len(filename)-4]) #16 for train, 15 for test
         image_list[id] = output
     return image_list
 
 def writeScenarios(image_list):
-    training_set = pd.read_csv("../test.csv") #switch test to train
+    training_set = pd.read_csv("../train.csv") #switch test to train
     for i in range(len(training_set)):
-        dst = Path(f"../testingscenarios/{i:04d}.pkl") #switch testing to training
-        dst.write_bytes(pickle.dumps(dict(id_code=training_set.id_code[i], diagnosis=-1, features=image_list[training_set.id_code[i]])))
+        dst = Path(f"../trainingscenarios2/{i:04d}.pkl") #switch testing to training
+        dst.write_bytes(pickle.dumps(dict(id_code=training_set.id_code[i], diagnosis=training_set.diagnosis[i], features=image_list[training_set.id_code[i]])))
     
 def checkDuplicates():
     preprocessing = transforms.Compose([
@@ -78,7 +79,7 @@ def checkDuplicates():
 def getInputsLabels():
     inputs = []
     labels = []
-    filenames = glob.glob('../trainingscenarios/*.pkl')
+    filenames = glob.glob('../trainingscenarios2/*.pkl')
     filenames = sorted(filenames)
     np.random.shuffle(filenames)
     for filename in filenames:
@@ -103,14 +104,13 @@ def getInputsLabels():
     labels_dst.write_bytes(pickle.dumps(labels))
 
 def readInputLabels():
-    inputs_dst = Path(f"../inputs.pkl")
-    labels_dst = Path(f"../labels.pkl")
+    inputs_dst = Path(f"../inputs2.pkl")
+    labels_dst = Path(f"../labels2.pkl")
     inputs = pd.read_pickle(inputs_dst)
     labels = pd.read_pickle(labels_dst)
     return inputs, labels
 
 np.random.seed(0)
-
 exit()
 inputs, labels = readInputLabels()
 

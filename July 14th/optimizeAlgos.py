@@ -10,8 +10,8 @@ from pathlib import Path
 import pandas as pd
 
 def readInputLabels():
-    inputs_dst = Path(f"../inputs.pkl")
-    labels_dst = Path(f"../labels.pkl")
+    inputs_dst = Path(f"../inputs2.pkl")
+    labels_dst = Path(f"../labels2.pkl")
     inputs = pd.read_pickle(inputs_dst)
     labels = pd.read_pickle(labels_dst)
     return inputs, labels
@@ -55,7 +55,7 @@ def optimizeLogRegress():
     lg_accuracy = []
     lg_distance = []
     for i in c_values:
-        logregress = LogisticRegression(random_state=0, C=i, max_iter=7000).fit(train_inputs, train_labels)
+        logregress = LogisticRegression(random_state=0, C=i, max_iter=10000).fit(train_inputs, train_labels)
         predictions = logregress.predict(validation_inputs)
         lg_accuracy.append((predictions == validation_labels).astype(int).mean())
         lg_distance.append(((predictions - validation_labels) ** 2).mean())
@@ -100,5 +100,4 @@ train_inputs = inputs[:2930]
 train_labels = labels[:2930]
 validation_inputs = inputs[2930:]
 validation_labels = labels[2930:]
-optimizeDecTree()
-optimizeRandomForest()
+optimizeLogRegress()
