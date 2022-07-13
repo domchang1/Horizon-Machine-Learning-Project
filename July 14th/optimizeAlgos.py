@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 from sklearn.linear_model import LogisticRegression
 from sklearn.linear_model import LinearRegression
+from sklearn.ensemble import RandomForestClassifier
 from sklearn.neighbors import KNeighborsClassifier, KNeighborsRegressor
 from sklearn.tree import DecisionTreeClassifier
 import numpy as np
@@ -43,7 +44,7 @@ def optimizeLogRegress():
     lg_accuracy = []
     lg_distance = []
     for i in c_values:
-        logregress = LogisticRegression(random_state=0, C=i, max_iter=4400).fit(inputs, labels)
+        logregress = LogisticRegression(random_state=0, C=i, max_iter=7000).fit(train_inputs, train_labels)
         predictions = logregress.predict(validation_inputs)
         lg_accuracy.append((predictions == validation_labels).astype(int).mean())
         lg_distance.append(((predictions - validation_labels) ** 2).mean())
@@ -57,12 +58,26 @@ def optimizeDecTree():
     dc_accuracy = []
     dc_distance = []
     for i in max_depths:
-        tree = DecisionTreeClassifier(max_depth=i).fit(inputs, labels)
+        tree = DecisionTreeClassifier(max_depth=i).fit(train_inputs, train_labels)
         predictions = tree.predict(validation_inputs)
         dc_accuracy.append((predictions == validation_labels).astype(int).mean())
         dc_distance.append(((predictions - validation_labels) ** 2).mean())
     plt.plot(max_depths, dc_accuracy, label="Decision Tree Accuracy")
     plt.plot(max_depths, dc_distance, label="Decision Tree Distance")
+    plt.legend()
+    plt.show()
+
+def optimizeRandomForest():
+    n_estimators = [(i+1)*10 for i in range(10)]
+    rf_accuracy = []
+    rf_distance = []
+    for i in n_estimators:
+        forest = RandomForestClassifier(n_estimators=i).fit(train_inputs, train_labels)
+        predictions = forest.predict(validation_inputs)
+        rf_accuracy.append((predictions == validation_labels).astype(int).mean())
+        rf_distance.append(((predictions - validation_labels) ** 2).mean())
+    plt.plot(n_estimators, rf_accuracy, label="Random Forest Accuracy")
+    plt.plot(n_estimators, rf_distance, label="Random Forest Distance")
     plt.legend()
     plt.show()
 

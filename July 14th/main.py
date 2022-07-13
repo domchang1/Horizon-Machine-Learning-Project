@@ -122,24 +122,23 @@ validation_labels = labels[2930:]
 
 kneighbors = KNeighborsClassifier(n_neighbors=1).fit(train_inputs, train_labels)
 kneighborsreg = KNeighborsRegressor(n_neighbors=3).fit(train_inputs, train_labels)
-logregress = LogisticRegression(random_state=0, C=847, max_iter=4400).fit(inputs, labels)
-linregress = LinearRegression().fit(inputs, labels)
-tree = DecisionTreeClassifier(max_depth=18).fit(inputs, labels)
-#forest = RandomForestClassifier(max_depth=5, n_estimators=10, max_features=1).fit(inputs, labels)
+logregress = LogisticRegression(random_state=0, C=200, max_iter=7000).fit(train_inputs, train_labels)
+linregress = LinearRegression().fit(train_inputs, train_labels)
+tree = DecisionTreeClassifier(max_depth=5).fit(train_inputs, train_labels)
+forest = RandomForestClassifier(n_estimators=30).fit(train_inputs, train_labels)
 
-models = [kneighbors, logregress]
+models = [kneighbors, kneighborsreg, logregress, linregress, tree, forest]
 
 
-exit()
-print(kneighborsreg)
-predictions = kneighborsreg.predict(validation_inputs)
-print((np.round(predictions,0) == validation_labels).astype(int).mean())
-print(((predictions - validation_labels) ** 2).mean()) #should I remove the exponent?
-exit()
-cm = confusion_matrix(validation_labels, predictions, labels=kneighbors.classes_, normalize='true')
-disp = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=kneighbors.classes_)
-disp.plot()      
-plt.show()
+# print(kneighborsreg)
+# predictions = kneighborsreg.predict(validation_inputs)
+# print((np.round(predictions,0) == validation_labels).astype(int).mean())
+# print(((predictions - validation_labels) ** 2).mean()) #should I remove the exponent?
+# exit()
+# cm = confusion_matrix(validation_labels, predictions, labels=kneighbors.classes_, normalize='true')
+# disp = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=kneighbors.classes_)
+# disp.plot()      
+# plt.show()
 #lsvm = SVC(kernel="linear", C=1000).fit(inputs, labels) #higher C means higher accuracy, lower distance
 #rbfsvm =  SVC(gamma=2, C=1).fit(inputs, labels) #no tuning needed
 #gausspc = GaussianProcessClassifier(1.0 * RBF(1.0), max_iter_predict=200, n_jobs=-1).fit(inputs, labels) #really slow
@@ -153,18 +152,18 @@ plt.show()
 # linregress = LinearRegression().fit(inputs, labels)
 # predictions = [kneighbors]
 # #kneighbors, lsvm, rbfsvm, gausspc, tree, forest, mlp, ada, gaussnb, qda, logregress, linregress
-# x = 1
-# for i in predictions:
-#     train_predictions = i.predict(train_inputs)
-#     print((train_predictions == train_labels).astype(int).mean())
-#     print(((train_predictions - train_labels) ** 2).mean())
-#     print(x)
-#     if x != 12:
-#         cm = confusion_matrix(train_labels, train_predictions, labels=i.classes_)
-#         disp = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=i.classes_)
-#         disp.plot()      
-#         plt.show()
-#     x += 1
+x = 1
+for i in models:
+    predictions = i.predict(validation_inputs)
+    print((predictions == train_labels).astype(int).mean())
+    print(((predictions - train_labels) ** 2).mean())
+    print(x)
+    if x != 12:
+        cm = confusion_matrix(train_labels, train_predictions, labels=i.classes_)
+        disp = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=i.classes_)
+        disp.plot()      
+        plt.show()
+    x += 1
 
 #test_predictions = kneighbors.predict(inputs)
 
