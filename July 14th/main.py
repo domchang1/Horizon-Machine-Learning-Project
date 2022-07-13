@@ -110,14 +110,14 @@ def readInputLabels():
     return inputs, labels
 
 np.random.seed(0)
+
+exit()
 inputs, labels = readInputLabels()
 
 train_inputs = inputs[:2930]
 train_labels = labels[:2930]
 validation_inputs = inputs[2930:]
 validation_labels = labels[2930:]
-
-
 
 
 kneighbors = KNeighborsClassifier(n_neighbors=1).fit(train_inputs, train_labels)
@@ -159,7 +159,7 @@ for i in models:
     print(((predictions - train_labels) ** 2).mean())
     print(x)
     if x != 12:
-        cm = confusion_matrix(train_labels, train_predictions, labels=i.classes_)
+        cm = confusion_matrix(train_labels, predictions, labels=i.classes_)
         disp = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=i.classes_)
         disp.plot()      
         plt.show()

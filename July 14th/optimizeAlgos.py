@@ -3,6 +3,7 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.linear_model import LinearRegression
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.neighbors import KNeighborsClassifier, KNeighborsRegressor
+from sklearn.semi_supervised import LabelSpreading
 from sklearn.tree import DecisionTreeClassifier
 import numpy as np
 from pathlib import Path
@@ -14,6 +15,15 @@ def readInputLabels():
     inputs = pd.read_pickle(inputs_dst)
     labels = pd.read_pickle(labels_dst)
     return inputs, labels
+
+def turnIntoDetection(labels):
+    new_labels = []
+    for i in range(len(labels)):
+        if labels[i] == 0:
+            new_labels.append(0)
+        else:
+            new_labels.append(1)
+    return new_labels
 
 def optimizeKNN():
     num_neighbors = [1,2,3,4,5,6,7,8,9,10]
@@ -30,6 +40,7 @@ def optimizeKNN():
         predictions = kneighborsreg.predict(validation_inputs)
         knr_a.append((np.round(predictions,0) == validation_labels).astype(int).mean())
         knr_d.append(((predictions - validation_labels) ** 2).mean())
+        # print(kn_a[-1] - knr_a[-1])
     plt.plot(num_neighbors, kn_a, label="Classifier Accuracy")
     plt.plot(num_neighbors, knr_a, label="Regressor Accuracy")
     plt.legend()
@@ -83,9 +94,11 @@ def optimizeRandomForest():
 
 np.random.seed(0)
 inputs, labels = readInputLabels()
+#labels = turnIntoDetection(labels)
 
 train_inputs = inputs[:2930]
 train_labels = labels[:2930]
 validation_inputs = inputs[2930:]
 validation_labels = labels[2930:]
-optimizeLogRegress()
+optimizeDecTree()
+optimizeRandomForest()
