@@ -109,30 +109,6 @@ def readInputLabels():
     labels = pd.read_pickle(labels_dst)
     return inputs, labels
 
-def optimizeKNN():
-    num_neighbors = [1,2,3,4,5,6,7,8,9,10]
-    kn_a = []
-    kn_d = []
-    knr_a = []
-    knr_d = []
-    for i in num_neighbors:
-        kneighbors = KNeighborsClassifier(n_neighbors=i).fit(train_inputs, train_labels)
-        predictions = kneighbors.predict(validation_inputs)
-        kn_a.append((predictions == validation_labels).astype(int).mean())
-        kn_d.append(((predictions - validation_labels) ** 2).mean())
-        kneighborsreg = KNeighborsRegressor(n_neighbors=i).fit(train_inputs, train_labels)
-        predictions = kneighborsreg.predict(validation_inputs)
-        knr_a.append((np.round(predictions,0) == validation_labels).astype(int).mean())
-        knr_d.append(((predictions - validation_labels) ** 2).mean())
-    plt.plot(num_neighbors, kn_a, label="Classifier Accuracy")
-    plt.plot(num_neighbors, knr_a, label="Regressor Accuracy")
-    plt.legend()
-    plt.show()
-    plt.plot(num_neighbors, kn_d, label="Classifier Distance")
-    plt.plot(num_neighbors, knr_d, label="Regressor Distance")
-    plt.legend()
-    plt.show()
-
 np.random.seed(0)
 inputs, labels = readInputLabels()
 
@@ -141,11 +117,14 @@ train_labels = labels[:2930]
 validation_inputs = inputs[2930:]
 validation_labels = labels[2930:]
 
+
+
+
 kneighbors = KNeighborsClassifier(n_neighbors=1).fit(train_inputs, train_labels)
 kneighborsreg = KNeighborsRegressor(n_neighbors=3).fit(train_inputs, train_labels)
-logregress = LogisticRegression(random_state=0, C=700, max_iter=4400).fit(inputs, labels)
+logregress = LogisticRegression(random_state=0, C=847, max_iter=4400).fit(inputs, labels)
 linregress = LinearRegression().fit(inputs, labels)
-tree = DecisionTreeClassifier(max_depth=5).fit(inputs, labels)
+tree = DecisionTreeClassifier(max_depth=18).fit(inputs, labels)
 #forest = RandomForestClassifier(max_depth=5, n_estimators=10, max_features=1).fit(inputs, labels)
 
 models = [kneighbors, logregress]
