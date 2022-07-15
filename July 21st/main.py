@@ -35,7 +35,7 @@ def loadFeatures():
     resnet = models.resnet18(pretrained=True)
     newmodel = torch.nn.Sequential(*(list(resnet.children())[:-2]))
     image_list = {}
-    for filename in glob.glob('../tainr_images/*.png'): # switch depending on which images
+    for filename in glob.glob('../train_images/*.png'): # switch depending on which images
         im=Image.open(filename)
         input = preprocessing(im)
         input_batch = input.unsqueeze(0)
