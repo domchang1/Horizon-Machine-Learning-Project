@@ -41,13 +41,27 @@ def optimizeKNN():
         knr_a.append((np.round(predictions,0) == validation_labels).astype(int).mean())
         knr_d.append(((predictions - validation_labels) ** 2).mean())
         # print(kn_a[-1] - knr_a[-1])
-    plt.plot(num_neighbors, kn_a, label="Classifier Accuracy")
-    plt.plot(num_neighbors, knr_a, label="Regressor Accuracy")
-    plt.legend()
+    fig, ax = plt.subplots()
+    ax.plot(num_neighbors, kn_a, color="red")
+    ax.set_xlabel("Number of Neighbors", fontsize=14)
+    ax.set_ylabel("Accuracy", color="red", fontsize=14)
+    ax.set_ylim([0,1])
+    ax2 = ax.twinx()
+    ax2.plot(num_neighbors, kn_d, color="blue")
+    ax2.set_ylabel("Distance (MSE)", color="blue", fontsize=14)
+    ax2.set_ylim([0,3])
+    plt.title("K Nearest Neighbors Classifier Accuracy and Distance")
     plt.show()
-    plt.plot(num_neighbors, kn_d, label="Classifier Distance")
-    plt.plot(num_neighbors, knr_d, label="Regressor Distance")
-    plt.legend()
+    fig, ax = plt.subplots()
+    ax.plot(num_neighbors, knr_a, color="red")
+    ax.set_xlabel("Number of Neighbors", fontsize=14)
+    ax.set_ylabel("Accuracy", color="red", fontsize=14)
+    ax.set_ylim([0,1])
+    ax2 = ax.twinx()
+    ax2.plot(num_neighbors, knr_d, color="blue")
+    ax2.set_ylabel("Distance (MSE)", color="blue", fontsize=14)
+    ax2.set_ylim([0,3])
+    plt.title("K Nearest Neighbors Regressor Accuracy and Distance")
     plt.show()
 
 def optimizeLogRegress():
@@ -59,9 +73,16 @@ def optimizeLogRegress():
         predictions = logregress.predict(validation_inputs)
         lg_accuracy.append((predictions == validation_labels).astype(int).mean())
         lg_distance.append(((predictions - validation_labels) ** 2).mean())
-    plt.plot(c_values, lg_accuracy, label="Logistic Regression Accuracy")
-    plt.plot(c_values, lg_distance, label="Logistic Regression Distance")
-    plt.legend()
+    fig, ax = plt.subplots()
+    ax.plot(c_values, lg_accuracy, color="red")
+    ax.set_xlabel("C value", fontsize=14)
+    ax.set_ylabel("Accuracy", color="red", fontsize=14)
+    ax.set_ylim([0,1])
+    ax2 = ax.twinx()
+    ax2.plot(c_values, lg_distance, color="blue")
+    ax2.set_ylabel("Distance (MSE)", color="blue", fontsize=14)
+    ax2.set_ylim([0,3])
+    plt.title("Logisitic Regression Accuracy and Distance")
     plt.show()
 
 def optimizeDecTree():
@@ -73,9 +94,16 @@ def optimizeDecTree():
         predictions = tree.predict(validation_inputs)
         dc_accuracy.append((predictions == validation_labels).astype(int).mean())
         dc_distance.append(((predictions - validation_labels) ** 2).mean())
-    plt.plot(max_depths, dc_accuracy, label="Decision Tree Accuracy")
-    plt.plot(max_depths, dc_distance, label="Decision Tree Distance")
-    plt.legend()
+    fig, ax = plt.subplots()
+    ax.plot(max_depths, dc_accuracy, color="red")
+    ax.set_xlabel("Max Depth", fontsize=14)
+    ax.set_ylabel("Accuracy", color="red", fontsize=14)
+    ax.set_ylim([0,1])
+    ax2 = ax.twinx()
+    ax2.plot(max_depths, dc_distance, color="blue")
+    ax2.set_ylabel("Distance (MSE)", color="blue", fontsize=14)
+    ax2.set_ylim([0,3])
+    plt.title("Decision Tree Accuracy and Distance")
     plt.show()
 
 def optimizeRandomForest():
@@ -83,21 +111,33 @@ def optimizeRandomForest():
     rf_accuracy = []
     rf_distance = []
     for i in n_estimators:
-        forest = RandomForestClassifier(n_estimators=i).fit(train_inputs, train_labels)
+        forest = RandomForestClassifier(n_estimators=i, max_depth=4).fit(train_inputs, train_labels)
         predictions = forest.predict(validation_inputs)
         rf_accuracy.append((predictions == validation_labels).astype(int).mean())
         rf_distance.append(((predictions - validation_labels) ** 2).mean())
-    plt.plot(n_estimators, rf_accuracy, label="Random Forest Accuracy")
-    plt.plot(n_estimators, rf_distance, label="Random Forest Distance")
-    plt.legend()
+    fig, ax = plt.subplots()
+    ax.plot(n_estimators, rf_accuracy, color="red")
+    ax.set_xlabel("Num Estimators", fontsize=14)
+    ax.set_ylabel("Accuracy", color="red", fontsize=14)
+    ax.set_ylim([0,1])
+    ax2 = ax.twinx()
+    ax2.plot(n_estimators, rf_distance, color="blue")
+    ax2.set_ylabel("Distance (MSE)", color="blue", fontsize=14)
+    ax2.set_ylim([0,3])
+    plt.title("Random Forest Accuracy and Distance")
     plt.show()
 
 np.random.seed(0)
 inputs, labels = readInputLabels()
-#labels = turnIntoDetection(labels)
-
-train_inputs = inputs[:2930]
-train_labels = labels[:2930]
-validation_inputs = inputs[2930:]
-validation_labels = labels[2930:]
-optimizeLogRegress()
+# train_inputs = inputs[:2930]
+# train_labels = labels[:2930]
+# validation_inputs = inputs[2930:]
+# validation_labels = labels[2930:]
+train_inputs = inputs[:8000]
+train_labels = labels[:8000]
+validation_inputs = inputs[8000:]
+validation_labels = labels[8000:]
+# optimizeLogRegress()
+optimizeKNN()
+# optimizeRandomForest()
+# optimizeDecTree()

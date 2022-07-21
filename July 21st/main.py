@@ -94,7 +94,7 @@ def getInputsLabels():
             new_inputs.append(inputs[i])
             new_labels.append(labels[i])
     print(len(new_inputs))
-
+    exit()
     inputs = np.stack(new_inputs)
     labels = new_labels
     inputs_dst = Path(f"../inputs.pkl")
@@ -103,14 +103,14 @@ def getInputsLabels():
     labels_dst.write_bytes(pickle.dumps(labels))
 
 def readInputLabels():
-    inputs_dst = Path(f"../inputs2.pkl")
-    labels_dst = Path(f"../labels2.pkl")
+    inputs_dst = Path(f"../inputs.pkl")
+    labels_dst = Path(f"../labels.pkl")
     inputs = pd.read_pickle(inputs_dst)
     labels = pd.read_pickle(labels_dst)
     return inputs, labels
 
 np.random.seed(0)
-exit()
+
 inputs, labels = readInputLabels()
 
 train_inputs = inputs[:2930]
@@ -120,6 +120,10 @@ validation_labels = labels[2930:]
 
 
 kneighbors = KNeighborsClassifier(n_neighbors=1).fit(train_inputs, train_labels)
+predictions = kneighbors.predict(validation_inputs)
+print((np.round(predictions,0) == validation_labels).astype(int).mean())
+print(((predictions - validation_labels) ** 2).mean())
+exit()
 kneighborsreg = KNeighborsRegressor(n_neighbors=3).fit(train_inputs, train_labels)
 logregress = LogisticRegression(random_state=0, C=200, max_iter=7000).fit(train_inputs, train_labels)
 linregress = LinearRegression().fit(train_inputs, train_labels)

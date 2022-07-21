@@ -6,6 +6,7 @@ from torchvision import transforms, models
 import torch
 import pandas as pd
 import pickle
+import numpy as np
 
 def createAugmentedImages():
     p = Augmentor.Pipeline("../train_images/")
@@ -22,33 +23,41 @@ preprocessing = transforms.Compose([
                                  std=[0.229, 0.224, 0.225]),
     ])
 resnet = models.resnet18(pretrained=True)
-newmodel = torch.nn.Sequential(*(list(resnet.children())[:-2]))
+newmodel = torch.nn.Sequential(*(list(resnet.children())[:-1]))
 inputs = []
 labels = []
 training_set = pd.read_csv("../train.csv", index_col=0)
 training_set = training_set.to_dict()
 # print(training_set)
 # print(training_set['diagnosis']['000c1434d8d7'])
-print("looking through files")
-counter = 0
+#print("looking through files")
+#counter = 0
 for filename in glob.glob('../augmented_train/*.png'):
-    if (counter % 100 == 0):
-        print(counter) 
+    # if (counter % 100 == 0):
+    #     print(counter) 
     im = Image.open(filename)
     input = preprocessing(im)
     input_batch = input.unsqueeze(0)
     with torch.no_grad():
-        output = newmodel(input_batch)
+        output = newmodel(input_batch)[0,:,0,0]
     id = str(filename[41:53])
     label = training_set['diagnosis'][id]
     inputs.append(output)
     labels.append(label)
-    counter += 1
-print(len(inputs))
-print(len(labels))
+    # print(output.shape)
+    # counter += 1
+# print(len(inputs))
+# print(len(labels))
+new_inputs = []
+new_labels = []
+for i in range(len(inputs)):
+    if not any((inputs[i] == new_inputs_).all() for new_inputs_ in new_inputs):
+        new_inputs.append(inputs[i])
+        new_labels.append(labels[i])
+inputs = np.stack(inputs)
 inputs_dst = Path(f"../inputs2.pkl")
 labels_dst = Path(f"../labels2.pkl")
 inputs_dst.write_bytes(pickle.dumps(inputs))
 labels_dst.write_bytes(pickle.dumps(labels))
-
+#remove duplicates
      
