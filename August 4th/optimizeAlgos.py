@@ -10,8 +10,8 @@ from pathlib import Path
 import pandas as pd
 
 def readInputLabels():
-    inputs_dst = Path(f"../inputs3.pkl")
-    labels_dst = Path(f"../labels3.pkl")
+    inputs_dst = Path(f"../inputs.pkl")
+    labels_dst = Path(f"../labels.pkl")
     inputs = pd.read_pickle(inputs_dst)
     labels = pd.read_pickle(labels_dst)
     return inputs, labels
@@ -147,20 +147,26 @@ def optimizeRandomForest():
     plt.title("Random Forest Accuracy and Distance")
     plt.show()
 
+def linregress():
+    linregress = LinearRegression().fit(train_inputs, train_labels)
+    predictions = linregress.predict(validation_inputs)
+    print((np.round(predictions,0) == validation_labels).astype(int).mean())
+    print(((predictions - validation_labels) ** 2).mean())
 np.random.seed(0)
 inputs, labels = readInputLabels()
-labels = turnIntoDetection(labels)
-# train_inputs = inputs[:2930]
-# train_labels = labels[:2930]
-# validation_inputs = inputs[2930:]
-# validation_labels = labels[2930:]
-train_inputs = inputs[:24427]
-train_labels = labels[:24427]
-validation_inputs = inputs[24427:]
-validation_labels = labels[24427:]
-print(train_inputs.shape)
-print(len(train_labels))
-optimizeLogRegress()
-optimizeKNN()
-optimizeRandomForest()
-optimizeDecTree()
+# labels = turnIntoDetection(labels)
+train_inputs = inputs[:2930]
+train_labels = labels[:2930]
+validation_inputs = inputs[2930:]
+validation_labels = labels[2930:]
+# train_inputs = inputs[:24427]
+# train_labels = labels[:24427]
+# validation_inputs = inputs[24427:]
+# validation_labels = labels[24427:]
+# print(train_inputs.shape)
+# print(len(train_labels))
+# optimizeLogRegress()
+# optimizeKNN()
+# optimizeRandomForest()
+# optimizeDecTree()
+linregress()
