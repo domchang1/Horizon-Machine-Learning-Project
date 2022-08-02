@@ -9,11 +9,11 @@ import pickle
 import numpy as np
 
 def createAugmentedImages():
-    p = Augmentor.Pipeline("../train_images/")
+    p = Augmentor.Pipeline("../modified_train_images/")
     p.rotate(probability=0.7, max_left_rotation=10, max_right_rotation=10)
     p.zoom(probability=0.5, min_factor=1.1, max_factor=1.5)
     p.flip_left_right(probability=0.5)
-    p.sample(10000)
+    p.sample(27000)
 
 preprocessing = transforms.Compose([
     transforms.Resize(256),
@@ -30,33 +30,43 @@ training_set = pd.read_csv("../train.csv", index_col=0)
 training_set = training_set.to_dict()
 # print(training_set)
 # print(training_set['diagnosis']['000c1434d8d7'])
-#print("looking through files")
-#counter = 0
+print("looking through files")
+counter = 0
 for filename in glob.glob('../augmented_train/*.png'):
-    # if (counter % 100 == 0):
-    #     print(counter) 
+    if (counter % 100 == 0):
+        print(counter) 
     im = Image.open(filename)
     input = preprocessing(im)
     input_batch = input.unsqueeze(0)
     with torch.no_grad():
         output = newmodel(input_batch)[0,:,0,0]
-    id = str(filename[41:53])
+    id = str(filename[50:62])
+    # print(id)
     label = training_set['diagnosis'][id]
     inputs.append(output)
     labels.append(label)
     # print(output.shape)
-    # counter += 1
+    counter += 1
+for filename in glob.glob('../modified_train_images/*.png'):
+    im = Image.open(filename)
+    input = preprocessing(im)
+    input_batch = input.unsqueeze(0)
+    with torch.no_grad():
+        output = newmodel(input_batch)[0,:,0,0]
+    id = str(filename[25:len(filename)-4])
+    if (counter % 100 == 0):
+        print(counter)
+        # print(id)
+    label = training_set['diagnosis'][id]
+    inputs.append(output)
+    labels.append(label)
+    counter += 1
+
 # print(len(inputs))
 # print(len(labels))
-new_inputs = []
-new_labels = []
-for i in range(len(inputs)):
-    if not any((inputs[i] == new_inputs_).all() for new_inputs_ in new_inputs):
-        new_inputs.append(inputs[i])
-        new_labels.append(labels[i])
 inputs = np.stack(inputs)
-inputs_dst = Path(f"../inputs2.pkl")
-labels_dst = Path(f"../labels2.pkl")
+inputs_dst = Path(f"../inputs3.pkl")
+labels_dst = Path(f"../labels3.pkl")
 inputs_dst.write_bytes(pickle.dumps(inputs))
 labels_dst.write_bytes(pickle.dumps(labels))
 #remove duplicates

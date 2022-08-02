@@ -51,7 +51,7 @@ def loadFeatures():
 def writeScenarios(image_list):
     training_set = pd.read_csv("../train.csv") #switch test to train
     for i in range(len(training_set)):
-        dst = Path(f"../trainingscenarios2/{i:04d}.pkl") #switch testing to training
+        dst = Path(f"../trainingscenarios/{{i:04d}}.pkl") #switch testing to training
         dst.write_bytes(pickle.dumps(dict(id_code=training_set.id_code[i], diagnosis=training_set.diagnosis[i], features=image_list[training_set.id_code[i]])))
     
 def checkDuplicates():
@@ -78,7 +78,7 @@ def checkDuplicates():
 def getInputsLabels():
     inputs = []
     labels = []
-    filenames = glob.glob('../trainingscenarios2/*.pkl')
+    filenames = glob.glob('../trainingscenarios/*.pkl')
     filenames = sorted(filenames)
     np.random.shuffle(filenames)
     for filename in filenames:
@@ -110,7 +110,8 @@ def readInputLabels():
     return inputs, labels
 
 np.random.seed(0)
-
+writeScenarios()
+exit()
 inputs, labels = readInputLabels()
 
 train_inputs = inputs[:2930]
