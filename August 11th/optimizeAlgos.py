@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 from sklearn.linear_model import LogisticRegression
 from sklearn.linear_model import LinearRegression
-from sklearn.ensemble import RandomForestClassifier
+from sklearn.ensemble import RandomForestClassifier, RandomForestRegressor
 from sklearn.neighbors import KNeighborsClassifier, KNeighborsRegressor
 from sklearn.semi_supervised import LabelSpreading
 from sklearn.tree import DecisionTreeClassifier, DecisionTreeRegressor
@@ -10,8 +10,8 @@ from pathlib import Path
 import pandas as pd
 
 def readInputLabels():
-    inputs_dst = Path(f"../inputs.pkl")
-    labels_dst = Path(f"../labels.pkl")
+    inputs_dst = Path(f"../inputs3.pkl")
+    labels_dst = Path(f"../labels3.pkl")
     inputs = pd.read_pickle(inputs_dst)
     labels = pd.read_pickle(labels_dst)
     return inputs, labels
@@ -131,7 +131,7 @@ def optimizeRandomForest():
     rf_accuracy = []
     rf_distance = []
     for i in n_estimators:
-        forest = RandomForestClassifier(n_estimators=i, max_depth=4).fit(train_inputs, train_labels)
+        forest = RandomForestClassifier(n_estimators=i, max_depth=10).fit(train_inputs, train_labels)
         predictions = forest.predict(validation_inputs)
         rf_accuracy.append((predictions == validation_labels).astype(int).mean())
         rf_distance.append(((predictions - validation_labels) ** 2).mean())
@@ -144,7 +144,25 @@ def optimizeRandomForest():
     ax2.plot(n_estimators, rf_distance, color="blue")
     ax2.set_ylabel("Distance (MSE)", color="blue", fontsize=14)
     ax2.set_ylim([0,3])
-    plt.title("Random Forest Accuracy and Distance")
+    plt.title("Random Forest Classifier Accuracy and Distance")
+    plt.show()
+    rf_accuracy = []
+    rf_distance = []
+    for i in n_estimators:
+        forest = RandomForestRegressor(n_estimators=i, max_depth=20).fit(train_inputs, train_labels)
+        predictions = forest.predict(validation_inputs)
+        rf_accuracy.append((np.round(predictions,0) == validation_labels).astype(int).mean())
+        rf_distance.append(((predictions - validation_labels) ** 2).mean())
+    fig, ax = plt.subplots()
+    ax.plot(n_estimators, rf_accuracy, color="red")
+    ax.set_xlabel("Num Estimators", fontsize=14)
+    ax.set_ylabel("Accuracy", color="red", fontsize=14)
+    ax.set_ylim([0,1])
+    ax2 = ax.twinx()
+    ax2.plot(n_estimators, rf_distance, color="blue")
+    ax2.set_ylabel("Distance (MSE)", color="blue", fontsize=14)
+    ax2.set_ylim([0,3])
+    plt.title("Random Forest Regressor Accuracy and Distance")
     plt.show()
 
 def linregress():
@@ -154,19 +172,19 @@ def linregress():
     print(((predictions - validation_labels) ** 2).mean())
 np.random.seed(0)
 inputs, labels = readInputLabels()
-# labels = turnIntoDetection(labels)
-train_inputs = inputs[:2930]
-train_labels = labels[:2930]
-validation_inputs = inputs[2930:]
-validation_labels = labels[2930:]
-# train_inputs = inputs[:24427]
-# train_labels = labels[:24427]
-# validation_inputs = inputs[24427:]
-# validation_labels = labels[24427:]
+labels = turnIntoDetection(labels)
+# train_inputs = inputs[:2930]
+# train_labels = labels[:2930]
+# validation_inputs = inputs[2930:]
+# validation_labels = labels[2930:]
+train_inputs = inputs[:24427]
+train_labels = labels[:24427]
+validation_inputs = inputs[24427:]
+validation_labels = labels[24427:]
 # print(train_inputs.shape)
 # print(len(train_labels))
 # optimizeLogRegress()
 # optimizeKNN()
-# optimizeRandomForest()
+optimizeRandomForest()
 # optimizeDecTree()
-linregress()
+# linregress()
