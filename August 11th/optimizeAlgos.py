@@ -10,8 +10,8 @@ from pathlib import Path
 import pandas as pd
 
 def readInputLabels():
-    inputs_dst = Path(f"../inputs3.pkl")
-    labels_dst = Path(f"../labels3.pkl")
+    inputs_dst = Path(f"../inputs.pkl")
+    labels_dst = Path(f"../labels.pkl")
     inputs = pd.read_pickle(inputs_dst)
     labels = pd.read_pickle(labels_dst)
     return inputs, labels
@@ -32,26 +32,26 @@ def optimizeKNN():
     knr_a = []
     knr_d = []
     for i in num_neighbors:
-        kneighbors = KNeighborsClassifier(n_neighbors=i).fit(train_inputs, train_labels)
-        predictions = kneighbors.predict(validation_inputs)
-        kn_a.append((predictions == validation_labels).astype(int).mean())
-        kn_d.append(((predictions - validation_labels) ** 2).mean())
+        # kneighbors = KNeighborsClassifier(n_neighbors=i).fit(train_inputs, train_labels)
+        # predictions = kneighbors.predict(validation_inputs)
+        # kn_a.append((predictions == validation_labels).astype(int).mean())
+        # kn_d.append(((predictions - validation_labels) ** 2).mean())
         kneighborsreg = KNeighborsRegressor(n_neighbors=i).fit(train_inputs, train_labels)
         predictions = kneighborsreg.predict(validation_inputs)
         knr_a.append((np.round(predictions,0) == validation_labels).astype(int).mean())
         knr_d.append(((predictions - validation_labels) ** 2).mean())
         # print(kn_a[-1] - knr_a[-1])
-    fig, ax = plt.subplots()
-    ax.plot(num_neighbors, kn_a, color="red")
-    ax.set_xlabel("Number of Neighbors", fontsize=14)
-    ax.set_ylabel("Accuracy", color="red", fontsize=14)
-    ax.set_ylim([0,1])
-    ax2 = ax.twinx()
-    ax2.plot(num_neighbors, kn_d, color="blue")
-    ax2.set_ylabel("Distance (MSE)", color="blue", fontsize=14)
-    ax2.set_ylim([0,3])
-    plt.title("K Nearest Neighbors Classifier Accuracy and Distance")
-    plt.show()
+    # fig, ax = plt.subplots()
+    # ax.plot(num_neighbors, kn_a, color="red")
+    # ax.set_xlabel("Number of Neighbors", fontsize=14)
+    # ax.set_ylabel("Accuracy", color="red", fontsize=14)
+    # ax.set_ylim([0,1])
+    # ax2 = ax.twinx()
+    # ax2.plot(num_neighbors, kn_d, color="blue")
+    # ax2.set_ylabel("Distance (MSE)", color="blue", fontsize=14)
+    # ax2.set_ylim([0,3])
+    # plt.title("K Nearest Neighbors Classifier Accuracy and Distance")
+    # plt.show()
     fig, ax = plt.subplots()
     ax.plot(num_neighbors, knr_a, color="red")
     ax.set_xlabel("Number of Neighbors", fontsize=14)
@@ -172,19 +172,19 @@ def linregress():
     print(((predictions - validation_labels) ** 2).mean())
 np.random.seed(0)
 inputs, labels = readInputLabels()
-labels = turnIntoDetection(labels)
-# train_inputs = inputs[:2930]
-# train_labels = labels[:2930]
-# validation_inputs = inputs[2930:]
-# validation_labels = labels[2930:]
-train_inputs = inputs[:24427]
-train_labels = labels[:24427]
-validation_inputs = inputs[24427:]
-validation_labels = labels[24427:]
+# labels = turnIntoDetection(labels)
+train_inputs = inputs[:2930]
+train_labels = labels[:2930]
+validation_inputs = inputs[2930:]
+validation_labels = labels[2930:]
+# train_inputs = inputs[:24427]
+# train_labels = labels[:24427]
+# validation_inputs = inputs[24427:]
+# validation_labels = labels[24427:]
 # print(train_inputs.shape)
 # print(len(train_labels))
 # optimizeLogRegress()
-# optimizeKNN()
-optimizeRandomForest()
+optimizeKNN()
+# optimizeRandomForest()
 # optimizeDecTree()
 # linregress()
